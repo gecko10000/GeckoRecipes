@@ -1,0 +1,4 @@
+name: GeckoRecipes
+main: gecko10000.geckorecipes.GeckoRecipes
+version: 0.1
+api-version: 1.13
