@@ -31,7 +31,7 @@ class RecipesViewGUI(player: Player) : GUI(player), KoinComponent {
         }
 
     override fun createInventory(): InventoryGUI {
-        val recipes = recipeManager.getRecipes()
+        val recipes = recipeManager.getRecipes(player)
         val inventorySize = min(54, ItemUtils.minimumChestSize(recipes.size))
         val inventory = InventoryGUI(Bukkit.createInventory(this, inventorySize, plugin.config.viewGuiName))
         inventory.fill(0, inventorySize, plugin.config.fillerItem)

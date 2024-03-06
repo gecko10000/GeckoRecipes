@@ -7,6 +7,9 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.context.startKoin
 
 class GeckoRecipes : JavaPlugin() {
+    companion object {
+        const val NAMESPACE = "geckorecipes"
+    }
 
     private lateinit var configFile: YamlFileManager<Config>
     val config: Config

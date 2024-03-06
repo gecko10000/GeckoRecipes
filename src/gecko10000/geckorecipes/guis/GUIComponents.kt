@@ -104,4 +104,19 @@ class GUIComponents : KoinComponent {
         }
     }
 
+    fun togglePermissionButton(recipe: CustomRecipe, callback: () -> Unit): ItemButton {
+        val item = ItemStack(if (recipe.requiresPermission) Material.ENDER_PEARL else Material.ENDER_EYE).apply {
+            editMeta {
+                it.displayName(parseMM("<green>Toggle permission"))
+                it.lore(
+                    listOf(
+                        parseMM("<gray>Current value:"),
+                        parseMM(if (recipe.requiresPermission) "<green>Required" else "<red>Not required"),
+                    )
+                )
+            }
+        }
+        return ItemButton.create(item) { _ -> callback() }
+    }
+
 }

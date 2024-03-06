@@ -25,7 +25,8 @@ class ShapedRecipeEditGUI(player: Player, private val recipe: CustomShapedRecipe
         private const val SIZE = 45
         private val ingredientSlots = listOf(10, 11, 12, 19, 20, 21, 28, 29, 30)
         private const val resultSlot = 24
-        private const val nameSlot = 6
+        private const val nameSlot = 5
+        private const val permissionSlot = 7
     }
 
     private fun getCurrentRecipe(): CustomShapedRecipe =
@@ -48,6 +49,10 @@ class ShapedRecipeEditGUI(player: Player, private val recipe: CustomShapedRecipe
                 { ShapedRecipeEditGUI(player, it as CustomShapedRecipe) },
                 { ShapedRecipeEditGUI(player, recipe) })
         )
+        inventory.addButton(permissionSlot, guiComponents.togglePermissionButton(recipe) {
+            val current = getCurrentRecipe()
+            ShapedRecipeEditGUI(player, current.copy(requiresPermission = !current.requiresPermission))
+        })
         recipe.ingredients
             .mapIndexed { i, ingredient ->
                 guiComponents.editRecipeChoiceButton(player, ingredient) {

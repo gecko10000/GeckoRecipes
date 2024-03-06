@@ -20,6 +20,7 @@ data class CustomShapelessRecipe(
     override val name: Component = MM.deserialize("<green>Shapeless Recipe"),
     private val _result: ItemStack = ItemStack(Material.CRAFTING_TABLE),
     override val category: CraftingBookCategory = CraftingBookCategory.MISC,
+    override val requiresPermission: Boolean = true,
     val ingredients: List<CustomRecipeChoice> = listOf(),
 ) : CustomRecipe {
     override val result: ItemStack
