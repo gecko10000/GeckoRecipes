@@ -1,11 +1,10 @@
 package gecko10000.geckorecipes
 
-import gecko10000.geckolib.extensions.parseMM
 import gecko10000.geckorecipes.model.recipe.CustomRecipe
 import org.bukkit.Bukkit
 import org.bukkit.Keyed
 import org.bukkit.entity.Player
-import org.bukkit.event.inventory.CraftItemEvent
+import org.bukkit.event.inventory.PrepareItemCraftEvent
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import redempt.redlib.misc.EventListener
@@ -18,17 +17,25 @@ class RecipeManager : KoinComponent {
 
     init {
         recipes.values.forEach(this::addRecipe)
-        EventListener(CraftItemEvent::class.java) { e ->
-            if (e.isCancelled) return@EventListener
+        EventListener(PrepareItemCraftEvent::class.java) { e ->
             val keyed = e.recipe as? Keyed ?: return@EventListener
             val key = keyed.key
             if (key.namespace != GeckoRecipes.NAMESPACE) return@EventListener
             val recipeId = key.key
             val recipe = recipes[recipeId] ?: return@EventListener
-            val player = e.whoClicked as? Player ?: return@EventListener
+            val player = e.view.player as? Player ?: return@EventListener
             if (!recipe.hasPermission(player)) {
-                player.sendMessage(parseMM("<red>You don't have permission to craft this yet!"))
-                e.isCancelled = true
+                e.inventory.result = null
+            }
+        }
+    }
+
+    private fun updateDiscovery(customRecipe: CustomRecipe) {
+        Bukkit.getOnlinePlayers().forEach { player ->
+            if (customRecipe.hasPermission(player)) {
+                player.discoverRecipe(customRecipe.key)
+            } else {
+                player.undiscoverRecipe(customRecipe.key)
             }
         }
     }
@@ -37,6 +44,7 @@ class RecipeManager : KoinComponent {
         recipes[customRecipe.id] = customRecipe
         Bukkit.removeRecipe(customRecipe.key)
         Bukkit.addRecipe(customRecipe.getRecipe())
+        updateDiscovery(customRecipe)
         save()
     }
 
