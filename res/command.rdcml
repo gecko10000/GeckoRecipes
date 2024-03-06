@@ -11,4 +11,9 @@ geckorecipes,customcrafting,cc {
         user player
         hook view
     }
+    reload {
+        help Reload the configs
+        permission geckorecipes.reload
+        hook reload
+    }
 }

@@ -1,6 +1,7 @@
 package gecko10000.geckorecipes.guis.view
 
 import gecko10000.geckolib.GUI
+import gecko10000.geckolib.extensions.withDefaults
 import gecko10000.geckorecipes.GeckoRecipes
 import gecko10000.geckorecipes.RecipeManager
 import gecko10000.geckorecipes.model.recipe.CustomRecipe
@@ -22,7 +23,7 @@ class RecipesViewGUI(player: Player) : GUI(player), KoinComponent {
     private val recipeManager: RecipeManager by inject()
 
     private fun recipeButton(recipe: CustomRecipe) =
-        ItemButton.create(recipe.result.apply { editMeta { it.displayName(recipe.name) } }) { _ ->
+        ItemButton.create(recipe.result.apply { editMeta { it.displayName(recipe.name.withDefaults()) } }) { _ ->
             when (recipe) {
                 is CustomShapedRecipe -> ShapedRecipeViewGUI(player, recipe)
                 is CustomShapelessRecipe -> ShapelessRecipeViewGUI(player, recipe)

@@ -1,7 +1,9 @@
 package gecko10000.geckorecipes
 
+import gecko10000.geckolib.extensions.parseMM
 import gecko10000.geckorecipes.guis.edit.RecipesEditGUI
 import gecko10000.geckorecipes.guis.view.RecipesViewGUI
+import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -21,5 +23,11 @@ class CommandHandler : KoinComponent {
 
     @CommandHook("edit")
     fun editCommand(player: Player) = RecipesEditGUI(player)
+
+    @CommandHook("reload")
+    fun reloadCommand(sender: CommandSender) {
+        plugin.reloadConfigs()
+        sender.sendMessage(parseMM("<green>Configs reloaded."))
+    }
 
 }

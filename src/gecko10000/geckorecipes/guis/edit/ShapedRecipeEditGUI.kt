@@ -25,6 +25,7 @@ class ShapedRecipeEditGUI(player: Player, private val recipe: CustomShapedRecipe
         private const val SIZE = 45
         private val ingredientSlots = listOf(10, 11, 12, 19, 20, 21, 28, 29, 30)
         private const val resultSlot = 24
+        private const val nameSlot = 6
     }
 
     private fun getCurrentRecipe(): CustomShapedRecipe =
@@ -39,6 +40,14 @@ class ShapedRecipeEditGUI(player: Player, private val recipe: CustomShapedRecipe
             )
         )
         inventory.fill(0, SIZE, plugin.config.fillerItem)
+        inventory.addButton(
+            nameSlot,
+            guiComponents.nameButton(
+                player,
+                recipe,
+                { ShapedRecipeEditGUI(player, it as CustomShapedRecipe) },
+                { ShapedRecipeEditGUI(player, recipe) })
+        )
         recipe.ingredients
             .mapIndexed { i, ingredient ->
                 guiComponents.editRecipeChoiceButton(player, ingredient) {

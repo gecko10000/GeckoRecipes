@@ -25,6 +25,7 @@ class ShapelessRecipeEditGUI(player: Player, private val recipe: CustomShapeless
         private const val SIZE = 45
         private val ingredientSlots = listOf(10, 11, 12, 19, 20, 21, 28, 29, 30)
         private const val resultSlot = 24
+        private const val nameSlot = 6
     }
 
     private fun getCurrentRecipe(): CustomShapelessRecipe =
@@ -39,6 +40,14 @@ class ShapelessRecipeEditGUI(player: Player, private val recipe: CustomShapeless
             )
         )
         inventory.fill(0, SIZE, plugin.config.fillerItem)
+        inventory.addButton(
+            nameSlot,
+            guiComponents.nameButton(
+                player,
+                recipe,
+                { ShapelessRecipeEditGUI(player, it as CustomShapelessRecipe) },
+                { ShapelessRecipeEditGUI(player, recipe) })
+        )
         ingredientSlots.forEach { inventory.inventory.setItem(it, null) }
         List(ingredientSlots.size) { index -> recipe.ingredients.getOrNull(index) }
             .mapIndexed { index, ingredient ->

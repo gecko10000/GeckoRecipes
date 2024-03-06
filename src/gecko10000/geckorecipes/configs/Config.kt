@@ -16,7 +16,7 @@ import org.bukkit.inventory.ItemStack
 @Serializable
 data class Config(
     val viewGuiName: Component = MM.deserialize("<gradient:#7300e6:#af00cc>Custom Recipes"),
-    private val viewRecipeName: Component = MM.deserialize("<#8b00cc>Custom Recipe: <name>"),
+    private val viewRecipeName: Component = MM.deserialize("<#8b00cc>Recipe: <name>"),
     val viewRecipeChoiceName: Component = MM.deserialize("<dark_green>Ingredient Options"),
     val prevButton: DisplayItem = DisplayItem(
         name = MM.deserialize("<red>Previous"),
