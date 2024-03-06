@@ -60,6 +60,7 @@ class ShapedRecipeEditGUI(player: Player, private val recipe: CustomShapedRecipe
             }
         inventory.inventory.setItem(resultSlot, recipe.result)
         inventory.openSlot(resultSlot)
+        inventory.setReturnsItems(false)
         inventory.addButton(
             SIZE - 4,
             ItemButton.create(plugin.config.cancelButton.item) { _ -> RecipesEditGUI(player) })

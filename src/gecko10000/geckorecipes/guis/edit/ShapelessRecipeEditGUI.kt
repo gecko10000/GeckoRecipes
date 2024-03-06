@@ -72,8 +72,9 @@ class ShapelessRecipeEditGUI(player: Player, private val recipe: CustomShapeless
                     ingredientSlots[i], button
                 )
             }
-        inventory.openSlot(resultSlot)
         inventory.inventory.setItem(resultSlot, recipe.result)
+        inventory.openSlot(resultSlot)
+        inventory.setReturnsItems(false)
         inventory.addButton(
             SIZE - 4,
             ItemButton.create(plugin.config.cancelButton.item) { _ -> RecipesEditGUI(player) })
