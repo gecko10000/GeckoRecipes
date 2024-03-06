@@ -1,8 +1,10 @@
 geckorecipes,customcrafting,cc {
-    help Edit custom recipes
-    permission geckorecipes.edit
-    user player
-    hook edit
+    edit {
+        help Edit custom recipes
+        permission geckorecipes.edit
+        user player
+        hook edit
+    }
     view {
         help View custom recipes
         permission geckorecipes.view

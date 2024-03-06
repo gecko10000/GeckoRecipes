@@ -38,6 +38,10 @@ data class Config(
         name = MM.deserialize("<red>Back"),
         material = Material.RED_STAINED_GLASS_PANE,
     ),
+    val createButton: DisplayItem = DisplayItem(
+        name = MM.deserialize("<white>(<green><bold>+</bold></green>)"),
+        material = Material.GREEN_STAINED_GLASS_PANE,
+    ),
     private val filler: Material = Material.BLACK_STAINED_GLASS_PANE,
 ) {
     @Transient

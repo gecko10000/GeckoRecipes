@@ -1,5 +1,6 @@
 package gecko10000.geckorecipes
 
+import gecko10000.geckorecipes.guis.edit.RecipesEditGUI
 import gecko10000.geckorecipes.guis.view.RecipesViewGUI
 import org.bukkit.entity.Player
 import org.koin.core.component.KoinComponent
@@ -19,6 +20,6 @@ class CommandHandler : KoinComponent {
     fun viewCommand(player: Player) = RecipesViewGUI(player)
 
     @CommandHook("edit")
-    fun editCommand(player: Player) = {}
+    fun editCommand(player: Player) = RecipesEditGUI(player)
 
 }

@@ -14,7 +14,7 @@ import org.koin.core.component.inject
 import redempt.redlib.inventorygui.InventoryGUI
 import redempt.redlib.itemutils.ItemUtils
 
-class RecipeChoiceGUI(
+class RecipeChoiceViewGUI(
     player: Player,
     private val choice: CustomRecipeChoice,
     private val backCallback: () -> Unit,

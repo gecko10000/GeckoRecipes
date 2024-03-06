@@ -1,17 +1,16 @@
-package gecko10000.geckorecipes.guis.view;
+package gecko10000.geckorecipes.guis.view
 
 import gecko10000.geckolib.GUI
 import gecko10000.geckorecipes.GeckoRecipes
 import gecko10000.geckorecipes.guis.GUIComponents
-import gecko10000.geckorecipes.model.recipe.ShapedCustomRecipe
+import gecko10000.geckorecipes.model.recipe.CustomShapelessRecipe
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import redempt.redlib.inventorygui.InventoryGUI
 
-class ShapedRecipeGUI(player: Player, private val recipe: ShapedCustomRecipe) :
-    GUI(player), KoinComponent {
+class ShapelessRecipeViewGUI(player: Player, private val recipe: CustomShapelessRecipe) : GUI(player), KoinComponent {
 
     private val plugin: GeckoRecipes by inject()
     private val guiComponents: GUIComponents by inject()
@@ -25,16 +24,19 @@ class ShapedRecipeGUI(player: Player, private val recipe: ShapedCustomRecipe) :
     override fun createInventory(): InventoryGUI {
         val inventory = InventoryGUI(Bukkit.createInventory(this, SIZE, plugin.config.viewRecipeName(recipe)))
         inventory.fill(0, SIZE, plugin.config.fillerItem)
+        ingredientSlots.forEach { inventory.inventory.setItem(it, null) }
         recipe.ingredients.map {
-            if (it == null) null else guiComponents.recipeChoiceButton(
-                player,
-                it
-            ) { ShapedRecipeGUI(player, recipe) }
+            guiComponents.viewRecipeChoiceButton(player, it) {
+                ShapelessRecipeViewGUI(
+                    player,
+                    recipe
+                )
+            }
         }
             .forEachIndexed { i, button ->
-                val slot = ingredientSlots[i]
-                if (button == null) inventory.inventory.setItem(slot, null)
-                else inventory.addButton(slot, button)
+                inventory.addButton(
+                    ingredientSlots[i], button
+                )
             }
         inventory.inventory.setItem(resultSlot, recipe.result)
         inventory.addButton(SIZE - 5, guiComponents.backButton { RecipesViewGUI(player) })

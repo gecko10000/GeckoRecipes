@@ -1,7 +1,8 @@
 package gecko10000.geckorecipes.guis
 
 import gecko10000.geckorecipes.GeckoRecipes
-import gecko10000.geckorecipes.guis.view.RecipeChoiceGUI
+import gecko10000.geckorecipes.guis.edit.RecipeChoiceEditGUI
+import gecko10000.geckorecipes.guis.view.RecipeChoiceViewGUI
 import gecko10000.geckorecipes.model.recipechoice.CustomRecipeChoice
 import gecko10000.geckorecipes.model.recipechoice.CustomRecipeExactChoice
 import gecko10000.geckorecipes.model.recipechoice.CustomRecipeMaterialChoice
@@ -16,14 +17,33 @@ class GUIComponents : KoinComponent {
 
     private val plugin: GeckoRecipes by inject()
 
-    fun recipeChoiceButton(player: Player, recipeChoice: CustomRecipeChoice, callback: () -> Unit): ItemButton {
-        val items = when (recipeChoice) {
-            is CustomRecipeExactChoice -> recipeChoice.validItems
-            is CustomRecipeMaterialChoice -> recipeChoice.validMaterials.map(::ItemStack)
-        }
-        return ItemButton.create(items.getOrElse(0) { ItemStack(Material.BARRIER) }) { _ ->
-            if (items.size > 1) RecipeChoiceGUI(
+    fun getDisplayItems(recipeChoice: CustomRecipeChoice) = when (recipeChoice) {
+        is CustomRecipeExactChoice -> recipeChoice.validItems
+        is CustomRecipeMaterialChoice -> recipeChoice.validMaterials.map(::ItemStack)
+    }
+
+    fun viewRecipeChoiceButton(player: Player, recipeChoice: CustomRecipeChoice, callback: () -> Unit): ItemButton {
+        val items = getDisplayItems(recipeChoice)
+        return ItemButton.create(items.toList().getOrElse(0) { ItemStack(Material.BARRIER) }) { _ ->
+            if (items.size > 1) RecipeChoiceViewGUI(
                 player,
+                recipeChoice,
+                callback
+            )
+        }
+    }
+
+    fun editRecipeChoiceButton(
+        player: Player,
+        givenChoice: CustomRecipeChoice?,
+        callback: (CustomRecipeChoice?) -> Unit,
+    ): ItemButton {
+        val items = givenChoice?.let { getDisplayItems(it) }
+        return ItemButton.create(items?.toList()?.getOrNull(0)) { _ ->
+            val recipeChoice = givenChoice ?: CustomRecipeMaterialChoice()
+            RecipeChoiceEditGUI(
+                player,
+                givenChoice,
                 recipeChoice,
                 callback
             )

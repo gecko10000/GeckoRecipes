@@ -35,6 +35,8 @@ class RecipeManager : KoinComponent {
         save()
     }
 
+    fun getRecipes() = recipes.values.toList()
+
     private fun save() = plugin.saveConfigs()
 
 }

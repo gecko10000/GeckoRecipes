@@ -4,22 +4,27 @@ package gecko10000.geckorecipes.model.recipe
 
 import gecko10000.geckoconfig.serializers.ItemStackSerializer
 import gecko10000.geckoconfig.serializers.MMComponentSerializer
+import gecko10000.geckolib.extensions.MM
 import gecko10000.geckorecipes.model.recipechoice.CustomRecipeChoice
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import net.kyori.adventure.text.Component
+import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.ShapedRecipe
 import org.bukkit.inventory.recipe.CraftingBookCategory
 
 @Serializable
-data class ShapedCustomRecipe(
+data class CustomShapedRecipe(
     override val id: String,
-    override val name: Component,
-    override val result: ItemStack,
+    override val name: Component = MM.deserialize("<green>Shaped Recipe"),
+    private val _result: ItemStack = ItemStack(Material.CRAFTING_TABLE),
     override val category: CraftingBookCategory = CraftingBookCategory.MISC,
-    val ingredients: List<CustomRecipeChoice?>,
+    val ingredients: List<CustomRecipeChoice?> = arrayOfNulls<CustomRecipeChoice>(9).toList(),
 ) : CustomRecipe {
+    override val result
+        get() = _result.clone()
+
     override fun getRecipe(): ShapedRecipe {
         val charMap = mutableMapOf<Char, CustomRecipeChoice>()
         val shapeStrings = mutableListOf<String>()
@@ -49,24 +54,26 @@ data class ShapedCustomRecipe(
     }
 
     private fun List<String>.shaveSides(): List<String> {
+        if (this.isEmpty()) return this
         val excludedIndices = mutableSetOf<Int>()
         var i = 0
         do {
             val isEmpty = this[i].trim().isEmpty()
             if (isEmpty) excludedIndices.add(i)
             i++
-        } while (isEmpty)
+        } while (isEmpty && i < this.size)
         i = this.size - 1
         do {
             val isEmpty = this[i].trim().isEmpty()
             if (isEmpty) excludedIndices.add(i)
             i--
-        } while (isEmpty)
+        } while (isEmpty && i >= 0)
         return this.filterIndexed { index, _ -> index !in excludedIndices }
     }
 
     // ["ab", "de", "gh"] -> ["adg", "beh"]
     private fun List<String>.transpose(): List<String> {
+        if (this.isEmpty()) return this
         val result = mutableListOf<String>()
         for (i in 0..<this[0].length) {
             val builder = StringBuilder()

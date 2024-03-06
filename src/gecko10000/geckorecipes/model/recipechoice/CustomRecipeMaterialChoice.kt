@@ -11,9 +11,9 @@ import org.bukkit.inventory.RecipeChoice
 
 @Serializable
 data class CustomRecipeMaterialChoice(
-    val validMaterials: List<Material>,
+    val validMaterials: Set<Material> = LinkedHashSet(),
 ) : CustomRecipeChoice {
     override fun getRecipeChoice(): RecipeChoice.MaterialChoice {
-        return RecipeChoice.MaterialChoice(validMaterials)
+        return RecipeChoice.MaterialChoice(validMaterials.toList())
     }
 }

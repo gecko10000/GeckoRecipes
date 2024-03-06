@@ -11,10 +11,10 @@ import org.bukkit.inventory.RecipeChoice
 
 @Serializable
 data class CustomRecipeExactChoice(
-    val validItems: List<ItemStack>,
+    val validItems: Set<ItemStack> = LinkedHashSet(),
 ) : CustomRecipeChoice {
 
     override fun getRecipeChoice(): RecipeChoice.ExactChoice {
-        return RecipeChoice.ExactChoice(validItems)
+        return RecipeChoice.ExactChoice(validItems.toList())
     }
 }
