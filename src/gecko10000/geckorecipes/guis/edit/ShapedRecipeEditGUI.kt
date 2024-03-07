@@ -1,13 +1,11 @@
 package gecko10000.geckorecipes.guis.edit
 
 import gecko10000.geckolib.GUI
-import gecko10000.geckolib.extensions.MM
 import gecko10000.geckolib.extensions.updated
 import gecko10000.geckorecipes.GeckoRecipes
 import gecko10000.geckorecipes.RecipeManager
 import gecko10000.geckorecipes.guis.GUIComponents
 import gecko10000.geckorecipes.model.recipe.CustomShapedRecipe
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.koin.core.component.KoinComponent
@@ -33,13 +31,7 @@ class ShapedRecipeEditGUI(player: Player, private val recipe: CustomShapedRecipe
         recipe.copy(_result = inventory.getItem(resultSlot) ?: recipe.result)
 
     override fun createInventory(): InventoryGUI {
-        val inventory = InventoryGUI(
-            Bukkit.createInventory(
-                this,
-                SIZE,
-                MM.deserialize("<dark_green>Editing recipe <id>", Placeholder.unparsed("id", recipe.id))
-            )
-        )
+        val inventory = InventoryGUI(Bukkit.createInventory(this, SIZE, plugin.config.editRecipeName(recipe)))
         inventory.fill(0, SIZE, plugin.config.fillerItem)
         inventory.addButton(
             nameSlot,

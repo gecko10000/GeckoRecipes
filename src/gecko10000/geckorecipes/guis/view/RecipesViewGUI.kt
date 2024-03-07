@@ -4,6 +4,7 @@ import gecko10000.geckolib.GUI
 import gecko10000.geckolib.extensions.withDefaults
 import gecko10000.geckorecipes.GeckoRecipes
 import gecko10000.geckorecipes.RecipeManager
+import gecko10000.geckorecipes.model.recipe.CustomFurnaceRecipe
 import gecko10000.geckorecipes.model.recipe.CustomRecipe
 import gecko10000.geckorecipes.model.recipe.CustomShapedRecipe
 import gecko10000.geckorecipes.model.recipe.CustomShapelessRecipe
@@ -27,6 +28,7 @@ class RecipesViewGUI(player: Player) : GUI(player), KoinComponent {
             when (recipe) {
                 is CustomShapedRecipe -> ShapedRecipeViewGUI(player, recipe)
                 is CustomShapelessRecipe -> ShapelessRecipeViewGUI(player, recipe)
+                is CustomFurnaceRecipe -> FurnaceRecipeViewGUI(player, recipe)
             }
         }
 

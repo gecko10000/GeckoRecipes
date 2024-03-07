@@ -17,6 +17,7 @@ import org.bukkit.inventory.ItemStack
 data class Config(
     val viewGuiName: Component = MM.deserialize("<gradient:#7300e6:#af00cc>Custom Recipes"),
     private val viewRecipeName: Component = MM.deserialize("<#8b00cc>Recipe: <name>"),
+    private val editRecipeName: Component = MM.deserialize("<dark_green>Editing recipe <id>"),
     val viewRecipeChoiceName: Component = MM.deserialize("<dark_green>Ingredient Options"),
     val prevButton: DisplayItem = DisplayItem(
         name = MM.deserialize("<red>Previous"),
@@ -52,4 +53,7 @@ data class Config(
 
     fun viewRecipeName(recipe: CustomRecipe) =
         viewRecipeName.replaceText { it.matchLiteral("<name>").replacement(recipe.name) }
+
+    fun editRecipeName(recipe: CustomRecipe) =
+        editRecipeName.replaceText { it.matchLiteral("<id>").replacement(recipe.id) }
 }

@@ -5,6 +5,7 @@ import gecko10000.geckolib.extensions.MM
 import gecko10000.geckolib.extensions.withDefaults
 import gecko10000.geckorecipes.GeckoRecipes
 import gecko10000.geckorecipes.guis.GUIComponents
+import gecko10000.geckorecipes.model.recipe.CustomFurnaceRecipe
 import gecko10000.geckorecipes.model.recipe.CustomShapedRecipe
 import gecko10000.geckorecipes.model.recipe.CustomShapelessRecipe
 import net.kyori.adventure.text.Component
@@ -65,6 +66,11 @@ class NewRecipeTypeGUI(player: Player) : GUI(player), KoinComponent {
             icon = Material.SLIME_BALL,
             displayName = "Shapeless Recipe",
             callback = { p, id -> ShapelessRecipeEditGUI(p, CustomShapelessRecipe(id = id)) }
+        ),
+        FURNACE(
+            icon = Material.FURNACE,
+            displayName = "Furnace Recipe",
+            callback = { p, id -> FurnaceRecipeEditGUI(p, CustomFurnaceRecipe(id)) }
         )
     }
 

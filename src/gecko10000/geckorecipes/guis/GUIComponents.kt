@@ -6,6 +6,7 @@ import gecko10000.geckolib.extensions.withDefaults
 import gecko10000.geckorecipes.GeckoRecipes
 import gecko10000.geckorecipes.guis.edit.RecipeChoiceEditGUI
 import gecko10000.geckorecipes.guis.view.RecipeChoiceViewGUI
+import gecko10000.geckorecipes.model.recipe.CustomFurnaceRecipe
 import gecko10000.geckorecipes.model.recipe.CustomRecipe
 import gecko10000.geckorecipes.model.recipe.CustomShapedRecipe
 import gecko10000.geckorecipes.model.recipe.CustomShapelessRecipe
@@ -94,6 +95,7 @@ class GUIComponents : KoinComponent {
                 val newRecipe = when (recipe) {
                     is CustomShapedRecipe -> recipe.copy(name = name)
                     is CustomShapelessRecipe -> recipe.copy(name = name)
+                    is CustomFurnaceRecipe -> recipe.copy(name = name)
                 }
                 callback(newRecipe)
             }) {

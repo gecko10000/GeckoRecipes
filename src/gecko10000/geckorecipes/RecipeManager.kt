@@ -5,6 +5,8 @@ import org.bukkit.Bukkit
 import org.bukkit.Keyed
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.PrepareItemCraftEvent
+import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.inventory.Recipe
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import redempt.redlib.misc.EventListener
@@ -15,49 +17,55 @@ class RecipeManager : KoinComponent {
     private val recipes: MutableMap<String, CustomRecipe>
         get() = plugin.recipeHolder.recipes
 
+    private fun Recipe.extractCustomRecipe(): CustomRecipe? {
+        val keyed = this as? Keyed ?: return null
+        val key = keyed.key
+        if (key.namespace != GeckoRecipes.NAMESPACE) return null
+        val recipeId = key.key
+        return recipes[recipeId]
+    }
+
     init {
         recipes.values.forEach(this::addRecipe)
         EventListener(PrepareItemCraftEvent::class.java) { e ->
-            val keyed = e.recipe as? Keyed ?: return@EventListener
-            val key = keyed.key
-            if (key.namespace != GeckoRecipes.NAMESPACE) return@EventListener
-            val recipeId = key.key
-            val recipe = recipes[recipeId] ?: return@EventListener
+            val recipe = e.recipe?.extractCustomRecipe() ?: return@EventListener
             val player = e.view.player as? Player ?: return@EventListener
             if (!recipe.hasPermission(player)) {
                 e.inventory.result = null
             }
         }
+        EventListener(PlayerJoinEvent::class.java) { e ->
+            val player = e.player
+            recipes.values.forEach { recipe -> updateDiscovery(recipe, player) }
+        }
+    }
+
+    private fun updateDiscovery(customRecipe: CustomRecipe, player: Player) {
+        if (!customRecipe.hasPermission(player)) player.undiscoverRecipe(customRecipe.key)
     }
 
     private fun updateDiscovery(customRecipe: CustomRecipe) {
-        Bukkit.getOnlinePlayers().forEach { player ->
-            if (customRecipe.hasPermission(player)) {
-                player.discoverRecipe(customRecipe.key)
-            } else {
-                player.undiscoverRecipe(customRecipe.key)
-            }
-        }
+        Bukkit.getOnlinePlayers().forEach { player -> updateDiscovery(customRecipe, player) }
     }
 
     fun addRecipe(customRecipe: CustomRecipe) {
         recipes[customRecipe.id] = customRecipe
         Bukkit.removeRecipe(customRecipe.key)
-        Bukkit.addRecipe(customRecipe.getRecipe())
+        Bukkit.addRecipe(customRecipe.getRecipe(), true)
         updateDiscovery(customRecipe)
         save()
     }
 
     fun deleteRecipe(customRecipe: CustomRecipe) {
         if (recipes.remove(customRecipe.id, customRecipe)) {
-            Bukkit.removeRecipe(customRecipe.key)
+            Bukkit.removeRecipe(customRecipe.key, true)
             save()
         }
     }
 
     fun deleteRecipe(recipeId: String) {
         val customRecipe = recipes.remove(recipeId) ?: return
-        Bukkit.removeRecipe(customRecipe.key)
+        Bukkit.removeRecipe(customRecipe.key, true)
         save()
     }
 
