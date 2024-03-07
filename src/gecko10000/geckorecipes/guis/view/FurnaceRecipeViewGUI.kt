@@ -14,6 +14,7 @@ import org.bukkit.inventory.ItemStack
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import redempt.redlib.inventorygui.InventoryGUI
+import java.text.DecimalFormat
 
 class FurnaceRecipeViewGUI(player: Player, private val recipe: CustomFurnaceRecipe) : GUI(player), KoinComponent {
 
@@ -25,6 +26,7 @@ class FurnaceRecipeViewGUI(player: Player, private val recipe: CustomFurnaceReci
         private const val inputSlot = 10
         private const val infoSlot = 13
         private const val resultSlot = 16
+        private val decimalFormat = DecimalFormat("0.##")
     }
 
     private fun infoIcon(): ItemStack = ItemStack(Material.FURNACE).apply {
@@ -34,11 +36,21 @@ class FurnaceRecipeViewGUI(player: Player, private val recipe: CustomFurnaceReci
                 listOf(
                     MM.deserialize(
                         "<gold>Cooking Time: <time>",
-                        Placeholder.unparsed("time", String.format("%.1f", recipe.cookingTimeTicks / 20.0))
+                        Placeholder.unparsed(
+                            "time",
+                            String.format(
+                                "%s second%s",
+                                decimalFormat.format(recipe.cookingTimeTicks / 20.0),
+                                if (recipe.cookingTimeTicks == 20) "" else "s"
+                            )
+                        )
                     ).withDefaults(),
                     MM.deserialize(
-                        "<green>Experience: <experience>",
-                        Placeholder.unparsed("experience", String.format("%f", recipe.experience))
+                        "<green><experience> experience",
+                        Placeholder.unparsed(
+                            "experience",
+                            decimalFormat.format(recipe.experience.toDouble())
+                        )
                     ).withDefaults(),
                 )
             )

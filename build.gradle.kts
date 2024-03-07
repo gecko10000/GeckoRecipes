@@ -53,7 +53,7 @@ tasks.register("update") {
     doLast {
         exec {
             workingDir(".")
-            commandLine("./update.sh")
+            commandLine("../../dot/local/bin/update.sh")
         }
     }
 }
