@@ -46,6 +46,7 @@ class FurnaceRecipeEditGUI(player: Player, private val recipe: CustomFurnaceReci
             }
         }
         return ItemButton.create(item) { _ ->
+            player.closeInventory()
             ChatPrompt.prompt(player, "Enter a new experience amount for the recipe:", {
                 val newAmount = it.toFloatOrNull() ?: return@prompt run {
                     player.sendMessage(parseMM("<red>Invalid number. Must be a decimal."))
@@ -69,6 +70,7 @@ class FurnaceRecipeEditGUI(player: Player, private val recipe: CustomFurnaceReci
             }
         }
         return ItemButton.create(item) { _ ->
+            player.closeInventory()
             ChatPrompt.prompt(player, "Enter a new cooking time in ticks for this recipe:", {
                 val newAmount = it.toIntOrNull() ?: return@prompt run {
                     player.sendMessage(parseMM("<red>Invalid number. Must be an integer."))
