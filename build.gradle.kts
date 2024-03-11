@@ -34,7 +34,9 @@ dependencies {
 
     compileOnly("com.github.Redempt:RedLib:6.5.10")
 
-    implementation("io.insert-koin:koin-core:3.5.3")
+    implementation("io.insert-koin:koin-core:3.5.3") {
+        exclude("org.jetbrains.kotlin")
+    }
 }
 
 kotlin {
