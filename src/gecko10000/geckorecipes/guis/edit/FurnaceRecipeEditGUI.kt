@@ -33,6 +33,12 @@ class FurnaceRecipeEditGUI(player: Player, private val recipe: CustomFurnaceReci
         private const val resultSlot = 12
     }
 
+    private fun getCurrentRecipe(): CustomFurnaceRecipe {
+        val inventoryResult = inventory.getItem(resultSlot)
+        val result = if (ItemUtils.isEmpty(inventoryResult)) recipe.result else inventoryResult!!
+        return recipe.copy(_result = result)
+    }
+
     private fun xpButton(): ItemButton {
         val item = ItemStack(Material.EXPERIENCE_BOTTLE).apply {
             editMeta {
@@ -46,14 +52,15 @@ class FurnaceRecipeEditGUI(player: Player, private val recipe: CustomFurnaceReci
             }
         }
         return ItemButton.create(item) { _ ->
+            val currentRecipe = getCurrentRecipe()
             player.closeInventory()
             ChatPrompt.prompt(player, "Enter a new experience amount for the recipe:", {
                 val newAmount = it.toFloatOrNull() ?: return@prompt run {
                     player.sendMessage(parseMM("<red>Invalid number. Must be a decimal."))
-                    FurnaceRecipeEditGUI(player, recipe)
+                    FurnaceRecipeEditGUI(player, currentRecipe)
                 }
-                FurnaceRecipeEditGUI(player, recipe.copy(experience = newAmount))
-            }, { if (it == ChatPrompt.CancelReason.PLAYER_CANCELLED) FurnaceRecipeEditGUI(player, recipe) })
+                FurnaceRecipeEditGUI(player, currentRecipe.copy(experience = newAmount))
+            }, { if (it == ChatPrompt.CancelReason.PLAYER_CANCELLED) FurnaceRecipeEditGUI(player, currentRecipe) })
         }
     }
 
@@ -70,21 +77,16 @@ class FurnaceRecipeEditGUI(player: Player, private val recipe: CustomFurnaceReci
             }
         }
         return ItemButton.create(item) { _ ->
+            val currentRecipe = getCurrentRecipe()
             player.closeInventory()
             ChatPrompt.prompt(player, "Enter a new cooking time in ticks for this recipe:", {
                 val newAmount = it.toIntOrNull() ?: return@prompt run {
                     player.sendMessage(parseMM("<red>Invalid number. Must be an integer."))
-                    FurnaceRecipeEditGUI(player, recipe)
+                    FurnaceRecipeEditGUI(player, currentRecipe)
                 }
-                FurnaceRecipeEditGUI(player, recipe.copy(cookingTimeTicks = newAmount))
-            }, { if (it == ChatPrompt.CancelReason.PLAYER_CANCELLED) FurnaceRecipeEditGUI(player, recipe) })
+                FurnaceRecipeEditGUI(player, currentRecipe.copy(cookingTimeTicks = newAmount))
+            }, { if (it == ChatPrompt.CancelReason.PLAYER_CANCELLED) FurnaceRecipeEditGUI(player, currentRecipe) })
         }
-    }
-
-    private fun getCurrentRecipe(): CustomFurnaceRecipe {
-        val inventoryResult = inventory.getItem(resultSlot)
-        val result = if (ItemUtils.isEmpty(inventoryResult)) recipe.result else inventoryResult!!
-        return recipe.copy(_result = result)
     }
 
     override fun createInventory(): InventoryGUI {
@@ -95,17 +97,18 @@ class FurnaceRecipeEditGUI(player: Player, private val recipe: CustomFurnaceReci
             guiComponents.nameButton(
                 player,
                 recipe,
-                callback = { FurnaceRecipeEditGUI(player, it as CustomFurnaceRecipe) },
+                this::getCurrentRecipe,
+                callback = { FurnaceRecipeEditGUI(player, it) },
                 cancelCallback = { FurnaceRecipeEditGUI(player, recipe) })
         )
         inventory.addButton(xpSlot, xpButton())
         inventory.addButton(timeSlot, timeButton())
         inventory.addButton(
             inputSlot,
-            guiComponents.editRecipeChoiceButton(player, recipe.input) {
+            guiComponents.editRecipeChoiceButton(player, this::getCurrentRecipe, recipe.input) { r, c ->
                 FurnaceRecipeEditGUI(
                     player,
-                    recipe.copy(input = it ?: recipe.input)
+                    r.copy(input = c ?: recipe.input)
                 )
             })
         inventory.inventory.setItem(furnaceSlot, ItemStack(Material.FURNACE))

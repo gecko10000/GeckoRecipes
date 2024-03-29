@@ -18,7 +18,7 @@ import org.bukkit.inventory.recipe.CraftingBookCategory
 data class CustomShapedRecipe(
     override val id: String,
     override val name: Component = MM.deserialize("<green>Shaped Recipe"),
-    private val _result: ItemStack = ItemStack(Material.CRAFTING_TABLE),
+    private val _result: ItemStack = ItemStack(Material.AIR),
     override val category: CraftingBookCategory = CraftingBookCategory.MISC,
     override val requiresPermission: Boolean = true,
     val ingredients: List<CustomRecipeChoice?> = arrayOfNulls<CustomRecipeChoice>(9).toList(),

@@ -38,7 +38,8 @@ class ShapedRecipeEditGUI(player: Player, private val recipe: CustomShapedRecipe
             guiComponents.nameButton(
                 player,
                 recipe,
-                { ShapedRecipeEditGUI(player, it as CustomShapedRecipe) },
+                this::getCurrentRecipe,
+                { ShapedRecipeEditGUI(player, it) },
                 { ShapedRecipeEditGUI(player, recipe) })
         )
         inventory.addButton(permissionSlot, guiComponents.togglePermissionButton(recipe) {
@@ -47,8 +48,8 @@ class ShapedRecipeEditGUI(player: Player, private val recipe: CustomShapedRecipe
         })
         recipe.ingredients
             .mapIndexed { i, ingredient ->
-                guiComponents.editRecipeChoiceButton(player, ingredient) {
-                    ShapedRecipeEditGUI(player, recipe.copy(ingredients = recipe.ingredients.updated(i, it)))
+                guiComponents.editRecipeChoiceButton(player, this::getCurrentRecipe, ingredient) { r, c ->
+                    ShapedRecipeEditGUI(player, r.copy(ingredients = r.ingredients.updated(i, c)))
                 }
             }
             .forEachIndexed { i, button ->

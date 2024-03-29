@@ -41,10 +41,11 @@ class GUIComponents : KoinComponent {
         }
     }
 
-    fun editRecipeChoiceButton(
+    fun <T : CustomRecipe> editRecipeChoiceButton(
         player: Player,
+        currentRecipeCallback: () -> T,
         givenChoice: CustomRecipeChoice?,
-        callback: (CustomRecipeChoice?) -> Unit,
+        callback: (T, CustomRecipeChoice?) -> Unit,
     ): ItemButton {
         val items = givenChoice?.let { getDisplayItems(it) }
         return ItemButton.create(items?.toList()?.getOrNull(0)) { e ->
@@ -61,6 +62,7 @@ class GUIComponents : KoinComponent {
             } else generatedChoice
             RecipeChoiceEditGUI(
                 player,
+                currentRecipeCallback(),
                 givenChoice,
                 recipeChoice,
                 callback
@@ -71,10 +73,11 @@ class GUIComponents : KoinComponent {
     fun backButton(callback: () -> Unit): ItemButton =
         ItemButton.create(plugin.config.backButton.item) { _ -> callback() }
 
-    fun nameButton(
+    fun <T : CustomRecipe> nameButton(
         player: Player,
-        recipe: CustomRecipe,
-        callback: (CustomRecipe) -> Unit,
+        recipe: T,
+        recipeCallback: () -> T,
+        callback: (T) -> Unit,
         cancelCallback: () -> Unit,
     ): ItemButton {
         return ItemButton.create(ItemStack(Material.NAME_TAG).apply {
@@ -88,6 +91,7 @@ class GUIComponents : KoinComponent {
                 )
             }
         }) { _ ->
+            val recipe = recipeCallback()
             player.closeInventory()
             val deserializedName = MM.serialize(recipe.name)
             ChatPrompt.prompt(player, "Enter a new name for recipe ${recipe.id} (previous: \"$deserializedName\")", {
@@ -96,8 +100,9 @@ class GUIComponents : KoinComponent {
                     is CustomShapedRecipe -> recipe.copy(name = name)
                     is CustomShapelessRecipe -> recipe.copy(name = name)
                     is CustomFurnaceRecipe -> recipe.copy(name = name)
+                    else -> throw IllegalArgumentException()
                 }
-                callback(newRecipe)
+                callback(newRecipe as T)
             }) {
                 if (it == ChatPrompt.CancelReason.PLAYER_CANCELLED) {
                     cancelCallback()

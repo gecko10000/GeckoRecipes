@@ -38,7 +38,8 @@ class ShapelessRecipeEditGUI(player: Player, private val recipe: CustomShapeless
             guiComponents.nameButton(
                 player,
                 recipe,
-                { ShapelessRecipeEditGUI(player, it as CustomShapelessRecipe) },
+                this::getCurrentRecipe,
+                { ShapelessRecipeEditGUI(player, it) },
                 { ShapelessRecipeEditGUI(player, recipe) })
         )
         inventory.addButton(permissionSlot, guiComponents.togglePermissionButton(recipe) {
@@ -48,19 +49,19 @@ class ShapelessRecipeEditGUI(player: Player, private val recipe: CustomShapeless
         ingredientSlots.forEach { inventory.inventory.setItem(it, null) }
         List(ingredientSlots.size) { index -> recipe.ingredients.getOrNull(index) }
             .mapIndexed { index, ingredient ->
-                guiComponents.editRecipeChoiceButton(player, ingredient) { choice ->
-                    val newIngredients = if (choice == null) {
-                        recipe.ingredients.filterIndexed { i, _ -> i != index }
+                guiComponents.editRecipeChoiceButton(player, this::getCurrentRecipe, ingredient) { r, c ->
+                    val newIngredients = if (c == null) {
+                        r.ingredients.filterIndexed { i, _ -> i != index }
                     } else {
-                        if (index >= recipe.ingredients.size) {
-                            recipe.ingredients.plus(choice)
+                        if (index >= r.ingredients.size) {
+                            r.ingredients.plus(c)
                         } else {
-                            recipe.ingredients.updated(index, choice)
+                            r.ingredients.updated(index, c)
                         }
                     }
                     ShapelessRecipeEditGUI(
                         player,
-                        recipe.copy(ingredients = newIngredients)
+                        r.copy(ingredients = newIngredients)
                     )
                 }
             }

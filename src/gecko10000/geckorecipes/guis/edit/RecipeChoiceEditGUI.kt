@@ -5,6 +5,7 @@ import gecko10000.geckolib.extensions.MM
 import gecko10000.geckolib.extensions.parseMM
 import gecko10000.geckorecipes.GeckoRecipes
 import gecko10000.geckorecipes.guis.GUIComponents
+import gecko10000.geckorecipes.model.recipe.CustomRecipe
 import gecko10000.geckorecipes.model.recipechoice.CustomRecipeChoice
 import gecko10000.geckorecipes.model.recipechoice.CustomRecipeExactChoice
 import gecko10000.geckorecipes.model.recipechoice.CustomRecipeMaterialChoice
@@ -21,11 +22,12 @@ import redempt.redlib.inventorygui.ItemButton
 import redempt.redlib.itemutils.ItemUtils
 import redempt.redlib.misc.EventListener
 
-class RecipeChoiceEditGUI(
+class RecipeChoiceEditGUI<T : CustomRecipe>(
     player: Player,
+    private val recipe: T,
     private val originalRecipeChoice: CustomRecipeChoice?,
     private val recipeChoice: CustomRecipeChoice,
-    private val callback: (CustomRecipeChoice?) -> Unit,
+    private val callback: (T, CustomRecipeChoice?) -> Unit,
 ) : GUI(player), KoinComponent {
 
     private val plugin: GeckoRecipes by inject()
@@ -44,7 +46,7 @@ class RecipeChoiceEditGUI(
                 is CustomRecipeMaterialChoice -> recipeChoice.copy(validMaterials = recipeChoice.validMaterials.filterNot { it == item.type }
                     .toSet())
             }
-            RecipeChoiceEditGUI(player, originalRecipeChoice, newRecipeChoice, callback)
+            RecipeChoiceEditGUI(player, recipe, originalRecipeChoice, newRecipeChoice, callback)
         }
     }
 
@@ -75,7 +77,7 @@ class RecipeChoiceEditGUI(
                     recipeChoice.validMaterials.map(::ItemStack).toSet()
                 )
             }
-            RecipeChoiceEditGUI(player, originalRecipeChoice, newRecipeChoice, callback)
+            RecipeChoiceEditGUI(player, recipe, originalRecipeChoice, newRecipeChoice, callback)
         }
     }
 
@@ -86,7 +88,7 @@ class RecipeChoiceEditGUI(
         guiComponents.getDisplayItems(recipeChoice).map(this::existingChoiceButton).forEachIndexed(inventory::addButton)
         inventory.addButton(
             SIZE - 7,
-            ItemButton.create(plugin.config.cancelButton.item) { _ -> callback(originalRecipeChoice) })
+            ItemButton.create(plugin.config.cancelButton.item) { _ -> callback(recipe, originalRecipeChoice) })
         inventory.addButton(SIZE - 5, exactChoiceToggle())
         inventory.addButton(
             SIZE - 3,
@@ -95,10 +97,10 @@ class RecipeChoiceEditGUI(
                     is CustomRecipeExactChoice -> if (recipeChoice.validItems.isEmpty()) null else recipeChoice
                     is CustomRecipeMaterialChoice -> if (recipeChoice.validMaterials.isEmpty()) null else recipeChoice
                 }
-                callback(newChoice)
+                callback(recipe, newChoice)
             })
         val listener = EventListener(InventoryClickEvent::class.java) { e ->
-            if (e.inventory.holder !is RecipeChoiceEditGUI || e.whoClicked != player || e.clickedInventory !is PlayerInventory) return@EventListener
+            if (e.inventory.holder !is RecipeChoiceEditGUI<*> || e.whoClicked != player || e.clickedInventory !is PlayerInventory) return@EventListener
             val currentItem = e.currentItem
             if (ItemUtils.isEmpty(currentItem)) return@EventListener
             e.isCancelled = true
@@ -110,7 +112,7 @@ class RecipeChoiceEditGUI(
                     )
                 )
             }
-            RecipeChoiceEditGUI(player, originalRecipeChoice, newRecipeChoice, callback)
+            RecipeChoiceEditGUI(player, recipe, originalRecipeChoice, newRecipeChoice, callback)
         }
         inventory.setOnDestroy { listener.unregister() }
         return inventory
