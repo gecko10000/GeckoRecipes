@@ -2,6 +2,7 @@
 
 package gecko10000.geckorecipes.configs
 
+import com.charleskorn.kaml.YamlComment
 import gecko10000.geckoconfig.objects.DisplayItem
 import gecko10000.geckoconfig.serializers.MMComponentSerializer
 import gecko10000.geckolib.extensions.MM
@@ -15,6 +16,9 @@ import org.bukkit.inventory.ItemStack
 
 @Serializable
 data class Config(
+    val showRecipeIconsWithoutPermission: Boolean = false,
+    @YamlComment("Only used when the above setting is true")
+    val shownPlaceholderMaterial: Material = Material.BARRIER,
     val viewGuiName: Component = MM.deserialize("<gradient:#7300e6:#af00cc>Custom Recipes"),
     private val viewRecipeName: Component = MM.deserialize("<#8b00cc>Recipe: <name>"),
     private val editRecipeName: Component = MM.deserialize("<dark_green>Editing recipe <id>"),

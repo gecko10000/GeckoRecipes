@@ -6,7 +6,6 @@ import gecko10000.geckolib.extensions.parseMM
 import gecko10000.geckolib.extensions.withDefaults
 import gecko10000.geckorecipes.GeckoRecipes
 import gecko10000.geckorecipes.RecipeManager
-import gecko10000.geckorecipes.guis.GUIComponents
 import gecko10000.geckorecipes.model.recipe.CustomCookingRecipe
 import gecko10000.geckorecipes.model.recipe.CustomRecipe
 import gecko10000.geckorecipes.model.recipe.CustomShapedRecipe
@@ -26,7 +25,6 @@ class RecipesEditGUI(player: Player) : GUI(player), KoinComponent {
 
     private val plugin: GeckoRecipes by inject()
     private val recipeManager: RecipeManager by inject()
-    private val guiComponents: GUIComponents by inject()
 
     private fun recipeEditButton(recipe: CustomRecipe): ItemButton {
         return ItemButton.create(recipe.result.apply {
