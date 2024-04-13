@@ -35,7 +35,18 @@ class GUIComponents : KoinComponent {
 
     fun viewRecipeChoiceButton(player: Player, recipeChoice: CustomRecipeChoice, callback: () -> Unit): ItemButton {
         val items = getDisplayItems(recipeChoice)
-        return ItemButton.create(items.toList().getOrElse(0) { ItemStack(Material.BARRIER) }) { _ ->
+        val displayIcon = items.toList().getOrElse(0) { ItemStack(Material.BARRIER) }.apply {
+            editMeta {
+                if (items.size > 1) {
+                    it.lore(
+                        it.lore().orEmpty().plus(
+                            parseMM("<green>Click to view ${items.size} options"),
+                        )
+                    )
+                }
+            }
+        }
+        return ItemButton.create(displayIcon) { _ ->
             if (items.size > 1) RecipeChoiceViewGUI(
                 player,
                 recipeChoice,
