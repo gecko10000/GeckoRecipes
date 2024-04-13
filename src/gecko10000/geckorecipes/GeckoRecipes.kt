@@ -22,8 +22,8 @@ class GeckoRecipes : JavaPlugin() {
         get() = configFile.value
 
     private lateinit var recipesFile: YamlFileManager<RecipeHolder>
-    val recipeHolder: RecipeHolder
-        get() = recipesFile.value
+    val recipes: MutableMap<String, CustomRecipe>
+        get() = recipesFile.value.recipes
 
     fun reloadConfigs() {
         configFile.reload()

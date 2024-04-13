@@ -14,6 +14,7 @@ import gecko10000.geckorecipes.model.recipe.CustomShapelessRecipe
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.ClickType
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import redempt.redlib.inventorygui.InventoryGUI
@@ -31,18 +32,45 @@ class RecipesEditGUI(player: Player) : GUI(player), KoinComponent {
         return ItemButton.create(recipe.result.apply {
             editMeta {
                 it.displayName(recipe.name.withDefaults())
-                it.lore(listOf(Component.empty(), parseMM("<red>Shift+right click to delete.")))
+                it.lore(
+                    listOf(
+                        Component.empty(),
+                        parseMM("<red>Left click to edit"),
+                        parseMM("<red>Shift+left click to move left"),
+                        parseMM("<red>Shift+right click to move right."),
+                        parseMM("<dark_red>Press Q to delete."),
+                    )
+                )
             }
         }) { e ->
-            if (e.isShiftClick && e.isRightClick) {
-                recipeManager.deleteRecipe(recipe)
+            if (e.isShiftClick) {
+                if (!e.isRightClick && !e.isLeftClick) return@create
+                val left = e.isLeftClick
+                val right = !left
+                val entries = plugin.recipes.toList().toMutableList()
+                val index = entries.indexOfFirst { it.first == recipe.id }
+                if (index == -1) return@create
+                if (left && index == 0) return@create
+                if (right && index == entries.size - 1) return@create
+                val toMove = entries.removeAt(index)
+                entries.add(index + (if (left) -1 else 1), toMove)
+                plugin.recipes.clear()
+                plugin.recipes.putAll(entries)
+                plugin.saveConfigs()
                 RecipesEditGUI(player)
                 return@create
             }
-            when (recipe) {
-                is CustomShapedRecipe -> ShapedRecipeEditGUI(player, recipe)
-                is CustomShapelessRecipe -> ShapelessRecipeEditGUI(player, recipe)
-                is CustomCookingRecipe -> CookingRecipeEditGUI(player, recipe)
+            if (e.isLeftClick) {
+                when (recipe) {
+                    is CustomShapedRecipe -> ShapedRecipeEditGUI(player, recipe)
+                    is CustomShapelessRecipe -> ShapelessRecipeEditGUI(player, recipe)
+                    is CustomCookingRecipe -> CookingRecipeEditGUI(player, recipe)
+                }
+            }
+            if (e.click == ClickType.DROP) {
+                recipeManager.deleteRecipe(recipe)
+                RecipesEditGUI(player)
+                return@create
             }
         }
     }

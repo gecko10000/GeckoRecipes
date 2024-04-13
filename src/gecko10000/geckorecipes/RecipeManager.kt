@@ -14,19 +14,17 @@ import redempt.redlib.misc.EventListener
 class RecipeManager : KoinComponent {
 
     private val plugin: GeckoRecipes by inject()
-    private val recipes: MutableMap<String, CustomRecipe>
-        get() = plugin.recipeHolder.recipes
 
     private fun Recipe.extractCustomRecipe(): CustomRecipe? {
         val keyed = this as? Keyed ?: return null
         val key = keyed.key
         if (key.namespace != GeckoRecipes.NAMESPACE) return null
         val recipeId = key.key
-        return recipes[recipeId]
+        return plugin.recipes[recipeId]
     }
 
     init {
-        recipes.values.forEach(this::addRecipe)
+        plugin.recipes.values.forEach(this::addRecipe)
         EventListener(PrepareItemCraftEvent::class.java) { e ->
             val recipe = e.recipe?.extractCustomRecipe() ?: return@EventListener
             val player = e.view.player as? Player ?: return@EventListener
@@ -36,7 +34,7 @@ class RecipeManager : KoinComponent {
         }
         EventListener(PlayerJoinEvent::class.java) { e ->
             val player = e.player
-            recipes.values.forEach { recipe -> updateDiscovery(recipe, player) }
+            plugin.recipes.values.forEach { recipe -> updateDiscovery(recipe, player) }
         }
     }
 
@@ -49,7 +47,7 @@ class RecipeManager : KoinComponent {
     }
 
     fun addRecipe(customRecipe: CustomRecipe) {
-        recipes[customRecipe.id] = customRecipe
+        plugin.recipes[customRecipe.id] = customRecipe
         Bukkit.removeRecipe(customRecipe.key)
         Bukkit.addRecipe(customRecipe.getRecipe(), true)
         updateDiscovery(customRecipe)
@@ -57,19 +55,19 @@ class RecipeManager : KoinComponent {
     }
 
     fun deleteRecipe(customRecipe: CustomRecipe) {
-        if (recipes.remove(customRecipe.id, customRecipe)) {
+        if (plugin.recipes.remove(customRecipe.id, customRecipe)) {
             Bukkit.removeRecipe(customRecipe.key, true)
             save()
         }
     }
 
     fun deleteRecipe(recipeId: String) {
-        val customRecipe = recipes.remove(recipeId) ?: return
+        val customRecipe = plugin.recipes.remove(recipeId) ?: return
         Bukkit.removeRecipe(customRecipe.key, true)
         save()
     }
 
-    fun getRecipes() = recipes.values.toList()
+    fun getRecipes() = plugin.recipes.values.toList()
 
     fun getRecipes(player: Player) = getRecipes().filter { it.hasPermission(player) }
 
