@@ -1,8 +1,14 @@
 package gecko10000.geckorecipes
 
+import com.charleskorn.kaml.Yaml
 import gecko10000.geckoconfig.YamlFileManager
 import gecko10000.geckorecipes.configs.Config
 import gecko10000.geckorecipes.configs.RecipeHolder
+import gecko10000.geckorecipes.model.recipe.CustomBlastingRecipe
+import gecko10000.geckorecipes.model.recipe.CustomFurnaceRecipe
+import gecko10000.geckorecipes.model.recipe.CustomRecipe
+import gecko10000.geckorecipes.model.recipe.CustomSmokingRecipe
+import kotlinx.serialization.modules.SerializersModule
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.context.startKoin
 
@@ -35,6 +41,25 @@ class GeckoRecipes : JavaPlugin() {
         recipesFile = YamlFileManager(
             configDirectory = dataFolder,
             configName = "recipes.yml",
+            stringFormat = Yaml(
+                configuration = YamlFileManager.defaultConfiguration,
+                serializersModule = SerializersModule {
+                    polymorphic(
+                        CustomRecipe::class,
+                        CustomSmokingRecipe::class,
+                        CustomSmokingRecipe.serializer()
+                    )
+                    polymorphic(
+                        CustomRecipe::class,
+                        CustomFurnaceRecipe::class,
+                        CustomFurnaceRecipe.serializer()
+                    )
+                    polymorphic(
+                        CustomRecipe::class,
+                        CustomBlastingRecipe::class,
+                        CustomBlastingRecipe.serializer()
+                    )
+                }),
             initialValue = RecipeHolder(),
             serializer = RecipeHolder.serializer()
         )

@@ -5,7 +5,10 @@ import gecko10000.geckolib.extensions.MM
 import gecko10000.geckolib.extensions.withDefaults
 import gecko10000.geckorecipes.GeckoRecipes
 import gecko10000.geckorecipes.guis.GUIComponents
+import gecko10000.geckorecipes.model.recipe.CustomBlastingRecipe
+import gecko10000.geckorecipes.model.recipe.CustomCookingRecipe
 import gecko10000.geckorecipes.model.recipe.CustomFurnaceRecipe
+import gecko10000.geckorecipes.model.recipe.CustomSmokingRecipe
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -16,7 +19,7 @@ import org.koin.core.component.inject
 import redempt.redlib.inventorygui.InventoryGUI
 import java.text.DecimalFormat
 
-class FurnaceRecipeViewGUI(player: Player, private val recipe: CustomFurnaceRecipe) : GUI(player), KoinComponent {
+class CookingRecipeViewGUI(player: Player, private val recipe: CustomCookingRecipe) : GUI(player), KoinComponent {
 
     private val plugin: GeckoRecipes by inject()
     private val guiComponents: GUIComponents by inject()
@@ -29,7 +32,13 @@ class FurnaceRecipeViewGUI(player: Player, private val recipe: CustomFurnaceReci
         private val decimalFormat = DecimalFormat("0.##")
     }
 
-    private fun infoIcon(): ItemStack = ItemStack(Material.FURNACE).apply {
+    private fun infoIcon(): ItemStack = ItemStack(
+        when (recipe) {
+            is CustomFurnaceRecipe -> Material.FURNACE
+            is CustomBlastingRecipe -> Material.BLAST_FURNACE
+            is CustomSmokingRecipe -> Material.SMOKER
+        }
+    ).apply {
         editMeta {
             it.displayName(recipe.name.withDefaults())
             it.lore(
@@ -61,7 +70,7 @@ class FurnaceRecipeViewGUI(player: Player, private val recipe: CustomFurnaceReci
         val inventory = InventoryGUI(Bukkit.createInventory(this, SIZE, plugin.config.viewRecipeName(recipe)))
         inventory.fill(0, SIZE, plugin.config.fillerItem)
         inventory.addButton(inputSlot,
-            guiComponents.viewRecipeChoiceButton(player, recipe.input) { FurnaceRecipeViewGUI(player, recipe) }
+            guiComponents.viewRecipeChoiceButton(player, recipe.input) { CookingRecipeViewGUI(player, recipe) }
         )
         inventory.inventory.setItem(infoSlot, infoIcon())
         inventory.inventory.setItem(resultSlot, recipe.result)

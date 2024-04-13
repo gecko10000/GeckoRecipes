@@ -11,14 +11,14 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
-import org.bukkit.inventory.FurnaceRecipe
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.SmokingRecipe
 import org.bukkit.inventory.recipe.CraftingBookCategory
 
 @Serializable
-data class CustomFurnaceRecipe(
+data class CustomSmokingRecipe(
     override val id: String,
-    override val name: Component = MM.deserialize("<green>Furnace Recipe"),
+    override val name: Component = MM.deserialize("<green>Smoking Recipe"),
     private val _result: ItemStack = ItemStack(Material.AIR),
     override val category: CraftingBookCategory = CraftingBookCategory.MISC,
     override val requiresPermission: Boolean = false,
@@ -30,10 +30,7 @@ data class CustomFurnaceRecipe(
     override val result: ItemStack
         get() = _result.clone()
 
-    override fun getRecipe(): FurnaceRecipe {
-        return FurnaceRecipe(
-            key, result, input.getRecipeChoice(), experience, cookingTimeTicks
-        )
+    override fun getRecipe(): SmokingRecipe {
+        return SmokingRecipe(key, result, input.getRecipeChoice(), experience, cookingTimeTicks)
     }
-
 }

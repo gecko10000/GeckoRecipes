@@ -5,9 +5,8 @@ import gecko10000.geckolib.extensions.MM
 import gecko10000.geckolib.extensions.withDefaults
 import gecko10000.geckorecipes.GeckoRecipes
 import gecko10000.geckorecipes.guis.GUIComponents
-import gecko10000.geckorecipes.model.recipe.CustomFurnaceRecipe
-import gecko10000.geckorecipes.model.recipe.CustomShapedRecipe
-import gecko10000.geckorecipes.model.recipe.CustomShapelessRecipe
+import gecko10000.geckorecipes.guis.prompt
+import gecko10000.geckorecipes.model.recipe.*
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -37,14 +36,12 @@ class NewRecipeTypeGUI(player: Player) : GUI(player), KoinComponent {
             }
         }) { _ ->
             player.closeInventory()
-            ChatPrompt.prompt(
-                player,
-                "Enter the ID of the ${recipeType.displayName}:",
-                { recipeType.callback(player, it) }) {
-                if (it == ChatPrompt.CancelReason.PLAYER_CANCELLED) {
-                    RecipesEditGUI(player)
-                }
-            }
+            prompt(player, MM.deserialize("<green>Enter a unique ID for the ${recipeType.displayName}"),
+                { recipeType.callback(player, it) }, { cancelReason ->
+                    if (cancelReason == ChatPrompt.CancelReason.PLAYER_CANCELLED) {
+                        RecipesEditGUI(player)
+                    }
+                })
         }
     }
 
@@ -70,7 +67,17 @@ class NewRecipeTypeGUI(player: Player) : GUI(player), KoinComponent {
         FURNACE(
             icon = Material.FURNACE,
             displayName = "Furnace Recipe",
-            callback = { p, id -> FurnaceRecipeEditGUI(p, CustomFurnaceRecipe(id)) }
+            callback = { p, id -> CookingRecipeEditGUI(p, CustomFurnaceRecipe(id)) }
+        ),
+        BLAST_FURNACE(
+            icon = Material.BLAST_FURNACE,
+            displayName = "Blast Furnace Recipe",
+            callback = { p, id -> CookingRecipeEditGUI(p, CustomBlastingRecipe(id)) }
+        ),
+        SMOKER(
+            icon = Material.SMOKER,
+            displayName = "Smoker Recipe",
+            callback = { p, id -> CookingRecipeEditGUI(p, CustomSmokingRecipe(id)) }
         )
     }
 

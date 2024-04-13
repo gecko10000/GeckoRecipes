@@ -1,18 +1,20 @@
 package gecko10000.geckorecipes.guis
 
 import gecko10000.geckolib.extensions.MM
+import gecko10000.geckolib.extensions.asClickable
 import gecko10000.geckolib.extensions.parseMM
 import gecko10000.geckolib.extensions.withDefaults
 import gecko10000.geckorecipes.GeckoRecipes
 import gecko10000.geckorecipes.guis.edit.RecipeChoiceEditGUI
 import gecko10000.geckorecipes.guis.view.RecipeChoiceViewGUI
-import gecko10000.geckorecipes.model.recipe.CustomFurnaceRecipe
+import gecko10000.geckorecipes.model.recipe.CustomCookingRecipe
 import gecko10000.geckorecipes.model.recipe.CustomRecipe
 import gecko10000.geckorecipes.model.recipe.CustomShapedRecipe
 import gecko10000.geckorecipes.model.recipe.CustomShapelessRecipe
 import gecko10000.geckorecipes.model.recipechoice.CustomRecipeChoice
 import gecko10000.geckorecipes.model.recipechoice.CustomRecipeExactChoice
 import gecko10000.geckorecipes.model.recipechoice.CustomRecipeMaterialChoice
+import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -20,6 +22,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import redempt.redlib.inventorygui.ItemButton
 import redempt.redlib.misc.ChatPrompt
+import redempt.redlib.misc.ChatPrompt.CancelReason
 
 class GUIComponents : KoinComponent {
 
@@ -94,20 +97,20 @@ class GUIComponents : KoinComponent {
             val recipe = recipeCallback()
             player.closeInventory()
             val deserializedName = MM.serialize(recipe.name)
-            ChatPrompt.prompt(player, "Enter a new name for recipe ${recipe.id} (previous: \"$deserializedName\")", {
+            prompt(player, "Enter a recipe name".asClickable(deserializedName), {
                 val name = MM.deserialize(it)
                 val newRecipe = when (recipe) {
                     is CustomShapedRecipe -> recipe.copy(name = name)
                     is CustomShapelessRecipe -> recipe.copy(name = name)
-                    is CustomFurnaceRecipe -> recipe.copy(name = name)
+                    is CustomCookingRecipe -> recipe.copy(name = name)
                     else -> throw IllegalArgumentException()
                 }
                 callback(newRecipe as T)
-            }) {
-                if (it == ChatPrompt.CancelReason.PLAYER_CANCELLED) {
+            }, { cancelReason ->
+                if (cancelReason == CancelReason.PLAYER_CANCELLED) {
                     cancelCallback()
                 }
-            }
+            })
         }
     }
 
@@ -127,3 +130,26 @@ class GUIComponents : KoinComponent {
     }
 
 }
+
+fun prompt(
+    player: Player,
+    message: Component,
+    onSuccess: (String) -> Unit,
+    onCancel: (CancelReason) -> Unit,
+    showCancelMessage: Boolean = true,
+) {
+    player.sendMessage(message)
+    ChatPrompt.prompt(player, null, showCancelMessage, onSuccess, onCancel)
+}
+
+fun prompt(
+    player: Player,
+    message: Component,
+    onSuccess: (String) -> Unit,
+    onCancel: () -> Unit,
+    showCancelMessage: Boolean = true,
+) =
+    prompt(player, message, onSuccess, { _ -> onCancel() }, showCancelMessage)
+
+fun prompt(player: Player, message: Component, onSuccess: (String) -> Unit, showCancelMessage: Boolean = true) =
+    prompt(player, message, onSuccess, { _ -> }, showCancelMessage)
