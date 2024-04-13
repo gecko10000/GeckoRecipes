@@ -1,11 +1,15 @@
 package gecko10000.geckorecipes.guis.view;
 
 import gecko10000.geckolib.GUI
+import gecko10000.geckolib.extensions.parseMM
 import gecko10000.geckorecipes.GeckoRecipes
 import gecko10000.geckorecipes.guis.GUIComponents
 import gecko10000.geckorecipes.model.recipe.CustomShapedRecipe
+import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
+import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import redempt.redlib.inventorygui.InventoryGUI
@@ -20,6 +24,8 @@ class ShapedRecipeViewGUI(player: Player, private val recipe: CustomShapedRecipe
         private const val SIZE = 45
         private val ingredientSlots = listOf(10, 11, 12, 19, 20, 21, 28, 29, 30)
         private const val resultSlot = 24
+        private const val amethystClusterSlot = 4
+        private const val craftingTableSlot = 22
     }
 
     override fun createInventory(): InventoryGUI {
@@ -36,6 +42,19 @@ class ShapedRecipeViewGUI(player: Player, private val recipe: CustomShapedRecipe
                 if (button == null) inventory.inventory.setItem(slot, null)
                 else inventory.addButton(slot, button)
             }
+        inventory.inventory.setItem(
+            amethystClusterSlot, ItemStack(
+                Material.AMETHYST_CLUSTER
+            ).apply {
+                editMeta {
+                    it.displayName(parseMM("<green>Shaped Recipe"))
+                }
+            })
+        inventory.inventory.setItem(craftingTableSlot, ItemStack(Material.CRAFTING_TABLE).apply {
+            editMeta {
+                it.displayName(Component.empty())
+            }
+        })
         inventory.inventory.setItem(resultSlot, recipe.result)
         inventory.addButton(SIZE - 5, guiComponents.backButton { RecipesViewGUI(player) })
         return inventory
