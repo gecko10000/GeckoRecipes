@@ -35,7 +35,7 @@ class GUIComponents : KoinComponent {
 
     fun viewRecipeChoiceButton(player: Player, recipeChoice: CustomRecipeChoice, callback: () -> Unit): ItemButton {
         val items = getDisplayItems(recipeChoice)
-        val displayIcon = items.toList().getOrElse(0) { ItemStack(Material.BARRIER) }.apply {
+        val displayIcon = items.toList().getOrElse(0) { ItemStack(Material.BARRIER) }.clone().apply {
             editMeta {
                 if (items.size > 1) {
                     it.lore(
