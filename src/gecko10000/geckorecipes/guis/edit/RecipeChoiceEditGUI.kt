@@ -1,9 +1,14 @@
 package gecko10000.geckorecipes.guis.edit
 
-import gecko10000.geckolib.GUI
 import gecko10000.geckolib.extensions.MM
 import gecko10000.geckolib.extensions.parseMM
+import gecko10000.geckolib.inventorygui.GUI
+import gecko10000.geckolib.inventorygui.InventoryGUI
+import gecko10000.geckolib.inventorygui.ItemButton
+import gecko10000.geckolib.misc.EventListener
+import gecko10000.geckolib.misc.ItemUtils
 import gecko10000.geckorecipes.GeckoRecipes
+import gecko10000.geckorecipes.di.MyKoinComponent
 import gecko10000.geckorecipes.guis.GUIComponents
 import gecko10000.geckorecipes.model.recipe.CustomRecipe
 import gecko10000.geckorecipes.model.recipechoice.CustomRecipeChoice
@@ -15,12 +20,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.PlayerInventory
-import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import redempt.redlib.inventorygui.InventoryGUI
-import redempt.redlib.inventorygui.ItemButton
-import redempt.redlib.itemutils.ItemUtils
-import redempt.redlib.misc.EventListener
 
 class RecipeChoiceEditGUI<T : CustomRecipe>(
     player: Player,
@@ -28,7 +28,7 @@ class RecipeChoiceEditGUI<T : CustomRecipe>(
     private val originalRecipeChoice: CustomRecipeChoice?,
     private val recipeChoice: CustomRecipeChoice,
     private val callback: (T, CustomRecipeChoice?) -> Unit,
-) : GUI(player), KoinComponent {
+) : GUI(player), MyKoinComponent {
 
     private val plugin: GeckoRecipes by inject()
     private val guiComponents: GUIComponents by inject()

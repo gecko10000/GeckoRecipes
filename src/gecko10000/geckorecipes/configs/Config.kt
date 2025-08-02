@@ -3,8 +3,8 @@
 package gecko10000.geckorecipes.configs
 
 import com.charleskorn.kaml.YamlComment
-import gecko10000.geckoconfig.objects.DisplayItem
-import gecko10000.geckoconfig.serializers.MMComponentSerializer
+import gecko10000.geckolib.config.objects.DisplayItem
+import gecko10000.geckolib.config.serializers.MMComponentSerializer
 import gecko10000.geckolib.extensions.MM
 import gecko10000.geckorecipes.model.recipe.CustomRecipe
 import kotlinx.serialization.Serializable

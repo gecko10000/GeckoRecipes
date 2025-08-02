@@ -4,7 +4,10 @@ import gecko10000.geckolib.extensions.MM
 import gecko10000.geckolib.extensions.asClickable
 import gecko10000.geckolib.extensions.parseMM
 import gecko10000.geckolib.extensions.withDefaults
+import gecko10000.geckolib.inventorygui.ItemButton
+import gecko10000.geckolib.misc.ChatPrompt
 import gecko10000.geckorecipes.GeckoRecipes
+import gecko10000.geckorecipes.di.MyKoinComponent
 import gecko10000.geckorecipes.guis.edit.RecipeChoiceEditGUI
 import gecko10000.geckorecipes.guis.view.RecipeChoiceViewGUI
 import gecko10000.geckorecipes.model.recipe.CustomCookingRecipe
@@ -18,13 +21,9 @@ import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import redempt.redlib.inventorygui.ItemButton
-import redempt.redlib.misc.ChatPrompt
-import redempt.redlib.misc.ChatPrompt.CancelReason
 
-class GUIComponents : KoinComponent {
+class GUIComponents : MyKoinComponent {
 
     private val plugin: GeckoRecipes by inject()
 
@@ -118,7 +117,7 @@ class GUIComponents : KoinComponent {
                 }
                 callback(newRecipe as T)
             }, { cancelReason ->
-                if (cancelReason == CancelReason.PLAYER_CANCELLED) {
+                if (cancelReason == ChatPrompt.CancelReason.PLAYER_CANCELLED) {
                     cancelCallback()
                 }
             })
@@ -146,7 +145,7 @@ fun prompt(
     player: Player,
     message: Component,
     onSuccess: (String) -> Unit,
-    onCancel: (CancelReason) -> Unit,
+    onCancel: (ChatPrompt.CancelReason) -> Unit,
     showCancelMessage: Boolean = true,
 ) {
     player.sendMessage(message)

@@ -1,7 +1,10 @@
 package gecko10000.geckorecipes.guis.view
 
-import gecko10000.geckolib.GUI
+import gecko10000.geckolib.inventorygui.GUI
+import gecko10000.geckolib.inventorygui.InventoryGUI
+import gecko10000.geckolib.misc.ItemUtils
 import gecko10000.geckorecipes.GeckoRecipes
+import gecko10000.geckorecipes.di.MyKoinComponent
 import gecko10000.geckorecipes.guis.GUIComponents
 import gecko10000.geckorecipes.model.recipechoice.CustomRecipeChoice
 import gecko10000.geckorecipes.model.recipechoice.CustomRecipeExactChoice
@@ -9,16 +12,13 @@ import gecko10000.geckorecipes.model.recipechoice.CustomRecipeMaterialChoice
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import redempt.redlib.inventorygui.InventoryGUI
-import redempt.redlib.itemutils.ItemUtils
 
 class RecipeChoiceViewGUI(
     player: Player,
     private val choice: CustomRecipeChoice,
     private val backCallback: () -> Unit,
-) : GUI(player), KoinComponent {
+) : GUI(player), MyKoinComponent {
 
     private val plugin: GeckoRecipes by inject()
     private val guiComponents: GUIComponents by inject()

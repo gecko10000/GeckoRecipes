@@ -1,10 +1,15 @@
 package gecko10000.geckorecipes.guis.view
 
-import gecko10000.geckolib.GUI
 import gecko10000.geckolib.extensions.MM
 import gecko10000.geckolib.extensions.withDefaults
+import gecko10000.geckolib.inventorygui.GUI
+import gecko10000.geckolib.inventorygui.InventoryGUI
+import gecko10000.geckolib.inventorygui.ItemButton
+import gecko10000.geckolib.inventorygui.PaginationPanel
+import gecko10000.geckolib.misc.ItemUtils
 import gecko10000.geckorecipes.GeckoRecipes
 import gecko10000.geckorecipes.RecipeManager
+import gecko10000.geckorecipes.di.MyKoinComponent
 import gecko10000.geckorecipes.model.recipe.CustomCookingRecipe
 import gecko10000.geckorecipes.model.recipe.CustomRecipe
 import gecko10000.geckorecipes.model.recipe.CustomShapedRecipe
@@ -12,15 +17,10 @@ import gecko10000.geckorecipes.model.recipe.CustomShapelessRecipe
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import redempt.redlib.inventorygui.InventoryGUI
-import redempt.redlib.inventorygui.ItemButton
-import redempt.redlib.inventorygui.PaginationPanel
-import redempt.redlib.itemutils.ItemUtils
 import kotlin.math.min
 
-class RecipesViewGUI(player: Player) : GUI(player), KoinComponent {
+class RecipesViewGUI(player: Player) : GUI(player), MyKoinComponent {
 
     private val plugin: GeckoRecipes by inject()
     private val recipeManager: RecipeManager by inject()

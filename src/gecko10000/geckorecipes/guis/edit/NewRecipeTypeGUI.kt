@@ -1,9 +1,13 @@
 package gecko10000.geckorecipes.guis.edit
 
-import gecko10000.geckolib.GUI
 import gecko10000.geckolib.extensions.MM
 import gecko10000.geckolib.extensions.withDefaults
+import gecko10000.geckolib.inventorygui.GUI
+import gecko10000.geckolib.inventorygui.InventoryGUI
+import gecko10000.geckolib.inventorygui.ItemButton
+import gecko10000.geckolib.misc.ChatPrompt
 import gecko10000.geckorecipes.GeckoRecipes
+import gecko10000.geckorecipes.di.MyKoinComponent
 import gecko10000.geckorecipes.guis.GUIComponents
 import gecko10000.geckorecipes.guis.prompt
 import gecko10000.geckorecipes.model.recipe.*
@@ -12,13 +16,9 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import redempt.redlib.inventorygui.InventoryGUI
-import redempt.redlib.inventorygui.ItemButton
-import redempt.redlib.misc.ChatPrompt
 
-class NewRecipeTypeGUI(player: Player) : GUI(player), KoinComponent {
+class NewRecipeTypeGUI(player: Player) : GUI(player), MyKoinComponent {
 
     private val plugin: GeckoRecipes by inject()
     private val guiComponents: GUIComponents by inject()
@@ -36,7 +36,8 @@ class NewRecipeTypeGUI(player: Player) : GUI(player), KoinComponent {
             }
         }) { _ ->
             player.closeInventory()
-            prompt(player, MM.deserialize("<green>Enter a unique ID for the ${recipeType.displayName}"),
+            prompt(
+                player, MM.deserialize("<green>Enter a unique ID for the ${recipeType.displayName}"),
                 { recipeType.callback(player, it) }, { cancelReason ->
                     if (cancelReason == ChatPrompt.CancelReason.PLAYER_CANCELLED) {
                         RecipesEditGUI(player)

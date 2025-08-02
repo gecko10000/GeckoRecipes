@@ -1,8 +1,10 @@
 package gecko10000.geckorecipes.guis.view
 
-import gecko10000.geckolib.GUI
 import gecko10000.geckolib.extensions.parseMM
+import gecko10000.geckolib.inventorygui.GUI
+import gecko10000.geckolib.inventorygui.InventoryGUI
 import gecko10000.geckorecipes.GeckoRecipes
+import gecko10000.geckorecipes.di.MyKoinComponent
 import gecko10000.geckorecipes.guis.GUIComponents
 import gecko10000.geckorecipes.model.recipe.CustomShapelessRecipe
 import net.kyori.adventure.text.Component
@@ -10,11 +12,9 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import redempt.redlib.inventorygui.InventoryGUI
 
-class ShapelessRecipeViewGUI(player: Player, private val recipe: CustomShapelessRecipe) : GUI(player), KoinComponent {
+class ShapelessRecipeViewGUI(player: Player, private val recipe: CustomShapelessRecipe) : GUI(player), MyKoinComponent {
 
     private val plugin: GeckoRecipes by inject()
     private val guiComponents: GUIComponents by inject()
@@ -44,13 +44,14 @@ class ShapelessRecipeViewGUI(player: Player, private val recipe: CustomShapeless
                     ingredientSlots[i], button
                 )
             }
-        inventory.inventory.setItem(slimeballSlot, ItemStack(
-            Material.SLIME_BALL
-        ).apply {
-            editMeta {
-                it.displayName(parseMM("<green>Shapeless Recipe"))
-            }
-        })
+        inventory.inventory.setItem(
+            slimeballSlot, ItemStack(
+                Material.SLIME_BALL
+            ).apply {
+                editMeta {
+                    it.displayName(parseMM("<green>Shapeless Recipe"))
+                }
+            })
         inventory.inventory.setItem(craftingTableSlot, ItemStack(Material.CRAFTING_TABLE).apply {
             editMeta {
                 it.displayName(Component.empty())

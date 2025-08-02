@@ -2,7 +2,7 @@
 
 package gecko10000.geckorecipes.model.recipechoice
 
-import gecko10000.geckoconfig.serializers.ItemStackSerializer
+import gecko10000.geckolib.config.serializers.ItemStackSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import org.bukkit.inventory.ItemStack

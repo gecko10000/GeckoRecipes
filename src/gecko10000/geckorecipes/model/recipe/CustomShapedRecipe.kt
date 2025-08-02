@@ -2,8 +2,8 @@
 
 package gecko10000.geckorecipes.model.recipe
 
-import gecko10000.geckoconfig.serializers.ItemStackSerializer
-import gecko10000.geckoconfig.serializers.MMComponentSerializer
+import gecko10000.geckolib.config.serializers.ItemStackSerializer
+import gecko10000.geckolib.config.serializers.MMComponentSerializer
 import gecko10000.geckolib.extensions.MM
 import gecko10000.geckorecipes.model.recipechoice.CustomRecipeChoice
 import kotlinx.serialization.Serializable

@@ -1,5 +1,7 @@
 package gecko10000.geckorecipes
 
+import gecko10000.geckolib.misc.EventListener
+import gecko10000.geckorecipes.di.MyKoinComponent
 import gecko10000.geckorecipes.model.recipe.CustomRecipe
 import org.bukkit.Bukkit
 import org.bukkit.Keyed
@@ -7,11 +9,9 @@ import org.bukkit.entity.Player
 import org.bukkit.event.inventory.PrepareItemCraftEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.inventory.Recipe
-import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import redempt.redlib.misc.EventListener
 
-class RecipeManager : KoinComponent {
+class RecipeManager : MyKoinComponent {
 
     private val plugin: GeckoRecipes by inject()
 
